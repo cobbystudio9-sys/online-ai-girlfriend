@@ -1,0 +1,1315 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#090711">
+<title>Online AI Girlfriend</title>
+
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#090711;color:#fff;font-family:Arial,sans-serif}
+button{cursor:pointer}
+header{display:flex;align-items:center;justify-content:space-between;padding:17px 16px;background:#110c1d;border-bottom:1px solid #30213f;position:sticky;top:0;z-index:5;gap:10px}
+.logo{font-size:18px;font-weight:bold;background:linear-gradient(90deg,#ff347c,#9874ff);-webkit-background-clip:text;color:transparent}
+.header-right{display:flex;align-items:center;gap:8px;font-size:12px;color:#c6a9ff}
+.small-btn{padding:9px 12px;border:1px solid #604477;border-radius:20px;background:#21152e;color:white;font-size:12px}
+.hero{text-align:center;padding:42px 20px;background:radial-gradient(ellipse at top,#40164e,#090711 75%)}
+.hero h1{font-size:clamp(26px,7vw,38px);margin-bottom:13px;background:linear-gradient(90deg,#ff347c,#9874ff);-webkit-background-clip:text;color:transparent}
+.hero p{color:#aaa4ba;font-size:14px;line-height:1.7;max-width:450px;margin:auto}
+.hero-stats{margin-top:20px;color:#e3c9ff;font-size:13px}
+.section{padding:22px 16px;max-width:1100px;margin:auto}
+.section h2{font-size:23px;margin-bottom:7px}
+.subtitle{color:#aaa4ba;font-size:13px;margin-bottom:17px}
+.search{width:100%;padding:15px;border:1px solid #44335e;background:#171225;border-radius:12px;color:white;outline:none;font-size:14px;margin-bottom:15px}
+.filters{display:flex;gap:9px;overflow-x:auto;padding-bottom:17px}
+.filters button{flex-shrink:0;padding:10px 15px;border-radius:25px;border:1px solid #49365f;color:white;background:#171225;font-size:12px}
+.filters button.active{background:linear-gradient(90deg,#f42f7a,#7865fa);border-color:transparent}
+.result-count{font-size:12px;color:#aaa4ba;margin-bottom:15px}
+.characters{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:13px}
+.character{background:#171225;border:1px solid #35264d;border-radius:14px;padding:9px;overflow:hidden}
+.avatar{display:block;width:100%;height:155px;object-fit:cover;object-position:center 25%;border-radius:10px;background:#302044;margin-bottom:12px}
+.character h3{font-size:16px;margin-bottom:6px}
+.tag{display:inline-block;color:#e5a8ff;font-size:11px;margin-bottom:8px}
+.character p{font-size:12px;line-height:1.5;color:#aaa4ba;min-height:38px;overflow-wrap:anywhere}
+.character button{width:100%;padding:11px 5px;margin-top:12px;border:none;border-radius:20px;background:linear-gradient(90deg,#f42f7a,#7865fa);color:white;font-weight:bold;font-size:12px}
+.empty{grid-column:1/-1;text-align:center;color:#aaa4ba;padding:40px 10px}
+.history-list{display:grid;gap:10px;margin-top:14px}.history-item{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:12px;border:1px solid #49335f;border-radius:12px;background:#171225}.history-item button{padding:9px 12px;border:0;border-radius:18px;background:linear-gradient(90deg,#f42f7a,#7865fa);color:white;font-weight:bold}.history-item strong{display:block;font-size:13px}.history-item small{display:block;color:#aaa4ba;font-size:11px;margin-top:5px}.history-empty{color:#aaa4ba;font-size:13px;line-height:1.6}.free-note{margin:15px 16px 25px;padding:17px;border:1px solid #45315e;border-radius:12px;background:#171225;color:#c7b9dc;font-size:13px;line-height:1.7}
+footer{padding:25px;text-align:center;color:#81788f;font-size:12px;border-top:1px solid #30213f}
+.create-section{margin:22px 16px;padding:20px;max-width:1068px;margin-left:auto;margin-right:auto;background:#171225;border:1px solid #49335f;border-radius:16px}
+.create-section h2{margin-bottom:8px}
+.create-section p{color:#aaa4ba;font-size:13px;line-height:1.6}
+.create-button,.primary{width:100%;padding:14px;margin-top:15px;border:none;border-radius:25px;background:linear-gradient(90deg,#f42f7a,#7865fa);color:white;font-weight:bold;font-size:14px}
+.creator-panel{display:none;margin-top:18px}
+.creator-panel.show{display:block}
+.creator-panel label,.auth-box label{display:block;margin:14px 0 7px;font-size:13px;color:#e5d7f5}
+.creator-panel input,.creator-panel select,.creator-panel textarea,.auth-box input{width:100%;padding:13px;border:1px solid #493866;border-radius:10px;background:#292138;color:white;outline:none;font-size:14px}
+.creator-panel textarea{min-height:85px;resize:vertical}
+.avatar-options{display:flex;flex-wrap:wrap;gap:10px}
+.avatar-option{width:48px;height:48px;border:2px solid #493866;border-radius:50%;background:#302044;font-size:23px;color:white}
+.avatar-option.selected{border-color:#ff347c;background:#593078}
+.preview-avatar{width:90px;height:90px;object-fit:cover;border-radius:50%;margin-top:12px}
+.creator-actions{display:flex;gap:10px;margin-top:17px}
+.creator-actions button{flex:1;padding:13px 5px;border:none;border-radius:20px;color:white;font-weight:bold}
+.save-character{background:linear-gradient(90deg,#f42f7a,#7865fa)}
+.cancel-character{background:#393047}
+.modal{display:none;position:fixed;inset:0;background:#000c;z-index:50;align-items:center;justify-content:center;padding:15px}
+.modal.show{display:flex}
+.auth-box{width:100%;max-width:420px;max-height:90vh;overflow-y:auto;background:#171225;border:1px solid #49335f;border-radius:16px;padding:22px}
+.auth-box h2{margin:10px 0;color:#f5dfff}
+.auth-box p{color:#aaa4ba;font-size:13px;line-height:1.6}
+.auth-tabs{display:flex;gap:8px;margin:17px 0}
+.auth-tabs button{flex:1;padding:11px;border-radius:20px;border:1px solid #493866;background:#292138;color:white}
+.auth-tabs button.active{background:linear-gradient(90deg,#f42f7a,#7865fa);border:0}
+.auth-message{margin-top:12px;font-size:13px;line-height:1.5;color:#e6baff;overflow-wrap:anywhere}
+.chat{display:none;position:fixed;inset:0;z-index:20;background:#090614;flex-direction:column}
+.chat-header{padding:16px;display:flex;align-items:center;justify-content:space-between;background:#171025;border-bottom:1px solid #35264d}
+.chat-person{display:flex;align-items:center;gap:12px}
+.chat-avatar{width:43px;height:43px;border-radius:50%;object-fit:cover;background:#5931aa}
+.chat-status{color:#aaa4ba;font-size:11px;margin-top:4px}
+.close-chat{color:white;border:none;background:none;font-size:25px;padding:5px}
+.messages{flex:1;padding:18px;overflow-y:auto}
+.message{max-width:85%;padding:13px;margin-bottom:13px;border-radius:15px;font-size:14px;line-height:1.6;overflow-wrap:anywhere}
+.ai-message{background:#28154d;border-bottom-left-radius:3px}
+.user-message{background:linear-gradient(90deg,#a92c9b,#6355d9);margin-left:auto;border-bottom-right-radius:3px}
+.typing{color:#aaa4ba;font-size:12px;margin-bottom:15px}
+.chat-input{display:flex;gap:8px;padding:13px;background:#171025;border-top:1px solid #35264d}
+.chat-input input{flex:1;min-width:0;padding:13px;border:1px solid #493866;border-radius:25px;background:#292138;color:white;outline:none}
+.chat-input button{padding:12px 17px;border:none;border-radius:25px;background:linear-gradient(90deg,#f42f7a,#7865fa);color:white;font-weight:bold}
+@media(min-width:600px){.characters{grid-template-columns:repeat(3,minmax(0,1fr))}.avatar{height:200px}}
+@media(min-width:900px){.characters{grid-template-columns:repeat(4,minmax(0,1fr))}}
+</style>
+</head>
+
+<body>
+
+<header>
+  <div class="logo">♡ Online AI Girlfriend</div>
+  <div class="header-right">
+    <span id="headerCount">96 Characters</span>
+    <button class="small-btn" id="accountButton" onclick="openAuth()">Login</button>
+  </div>
+</header>
+
+<section class="hero">
+  <h1>Meet Your AI Companions</h1>
+  <p>Explore different personalities, discover interesting characters and enjoy friendly AI conversations.</p>
+  <div class="hero-stats">✨ 96 Characters · 12 Categories</div>
+</section>
+
+<section class="create-section">
+  <h2>✨ Create Your Own Character</h2>
+  <p>Design your own fictional AI character. Choose a name, personality, interests and avatar. Sign in to save your characters.</p>
+  <button class="create-button" onclick="toggleCreator()">+ Create New Character</button>
+
+  <div class="creator-panel" id="creatorPanel">
+    <label>Character Name</label>
+    <input id="newName" type="text" placeholder="Enter character name" maxlength="25">
+
+    <label>Personality</label>
+    <select id="newPersonality">
+      <option>Friendly</option>
+      <option>Funny</option>
+      <option>Creative</option>
+      <option>Calm</option>
+      <option>Confident</option>
+      <option>Motivation</option>
+      <option>Intellectual</option>
+    </select>
+
+    <label>Interests</label>
+    <input id="newInterests" type="text" placeholder="Music, gaming, books..." maxlength="100">
+
+    <label>Conversation Style</label>
+    <select id="newStyle">
+      <option>Friendly and simple</option>
+      <option>Funny and entertaining</option>
+      <option>Detailed and thoughtful</option>
+      <option>Short and direct</option>
+    </select>
+
+    <label>Choose a Built-in Avatar</label>
+    <div class="avatar-options" id="avatarOptions">
+      <button type="button" class="avatar-option selected">😊</button>
+      <button type="button" class="avatar-option">😎</button>
+      <button type="button" class="avatar-option">🌟</button>
+      <button type="button" class="avatar-option">🎨</button>
+      <button type="button" class="avatar-option">🎧</button>
+      <button type="button" class="avatar-option">📚</button>
+      <button type="button" class="avatar-option">🌻</button>
+      <button type="button" class="avatar-option">🚀</button>
+    </div>
+
+    <label>Or Upload a Photo</label>
+    <input type="file" id="avatarUpload" accept="image/*">
+    <img id="avatarPreview" class="preview-avatar" alt="Avatar preview" style="display:none">
+
+    <label>Character Introduction</label>
+    <textarea id="newIntroduction" placeholder="Write a short introduction..." maxlength="300"></textarea>
+
+    <div class="creator-actions">
+      <button class="save-character" onclick="createCharacter()">Create Character</button>
+      <button class="cancel-character" onclick="toggleCreator()">Cancel</button>
+    </div>
+  </div>
+</section>
+
+<section class="section" id="historySection">
+  <h2>Your Chat History</h2>
+  <p class="subtitle">Continue a previous conversation.</p>
+  <div class="history-list" id="historyList">
+    <div class="history-empty">Log in to see your saved conversations.</div>
+  </div>
+</section>
+
+<section class="section">
+  <h2>Explore Characters</h2>
+  <p class="subtitle">Find a character that matches your interests.</p>
+  <input class="search" id="search" type="search" placeholder="Search by name or personality...">
+  <div class="filters" id="filters"></div>
+  <div class="result-count" id="resultCount"></div>
+  <div class="characters" id="characters"></div>
+</section>
+
+<div class="free-note">
+  ✨ All characters are available without premium memberships or paid character locks. Sign in is required before starting a chat. Conversations use AI-generated, friendly replies.
+</div>
+
+<footer>© 2026 Online AI Girlfriend. All rights reserved. Inspired by Appiah Okubi Phister a.k.a Cobby</footer>
+
+<!-- AUTHENTICATION MODAL -->
+
+<div class="modal" id="authModal">
+  <div class="auth-box">
+    <button class="small-btn" style="float:right" onclick="closeAuth()">Close</button>
+    <h2 id="authTitle">Welcome back</h2>
+    <p id="authDescription">Sign in to your account to start chatting and access your saved characters.</p>
+
+    <div class="auth-tabs">
+      <button id="loginTab" class="active" onclick="setAuthMode('login')">Login</button>
+      <button id="signupTab" onclick="setAuthMode('signup')">Register</button>
+    </div>
+
+    <form id="authForm">
+      <label>Email address</label>
+      <input id="authEmail" type="email" placeholder="you@example.com" autocomplete="email" required>
+
+      <label>Password</label>
+      <input id="authPassword" type="password" placeholder="At least 8 characters" minlength="8" autocomplete="current-password" required>
+
+      <button class="primary" id="authSubmit" type="submit">Login</button>
+    </form>
+
+    <div class="auth-message" id="authMessage" aria-live="polite"></div>
+  </div>
+</div>
+
+<!-- CHAT -->
+
+<div class="chat" id="chat">
+  <div class="chat-header">
+    <div class="chat-person">
+      <img id="chatAvatar" class="chat-avatar" src="" alt="Character">
+      <div>
+        <strong id="chatName">Character</strong>
+        <div class="chat-status">AI companion</div>
+      </div>
+    </div>
+    <button class="close-chat" onclick="closeChat()">×</button>
+  </div>
+
+  <div class="messages" id="messages"></div>
+
+  <div class="chat-input">
+    <input id="userInput" type="text" placeholder="Write a message..." maxlength="1000" onkeydown="if(event.key==='Enter'){event.preventDefault();sendMessage();}">
+    <button onclick="sendMessage()">Send</button>
+  </div>
+</div>
+
+<!-- Supabase library -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<script>
+
+/* =====================================
+   SUPABASE CONNECTION
+===================================== */
+
+const SUPABASE_URL = "https://omoacdjqbgwmpbhgpygv.supabase.co";
+const SUPABASE_KEY = "sb_publishable_d3w2GDS4y-0HLG2byR1J0Q_6YaXaOQq";
+
+const supabaseClient = window.supabase.createClient(
+  SUPABASE_URL,
+  SUPABASE_KEY
+);
+
+/* =====================================
+   PRE-CREATED CHARACTERS
+===================================== */
+
+const names = [
+"Mia","Ava","Isabella","Aisha","Sophia","Emily",
+"Chloe","Grace","Zara","Lily","Nina","Maya",
+"Amelia","Olivia","Charlotte","Ella","Aria",
+"Victoria","Scarlett","Layla","Hannah","Sofia",
+"Aurora","Stella","Naomi","Elena","Ruby","Alice",
+"Bella","Daisy","Violet","Hazel","Lucy","Anna",
+"Clara","Ivy","Sarah","Leah","Eva","Mila",
+"Freya","Luna","Jasmine","Rose","Iris","Athena",
+"Celine","Kiara","Melody","Sienna","Adeline","Elise",
+"Natalie","Penelope","Camila","Valentina","Gabriella",
+"Josephine","Madeline","Ariana","Samantha","Bianca",
+"Diana","Esme","Serena","Talia","Amara","Nora",
+"Juliet","Rebecca","Esther","Kayla","Alina","Ayla",
+"Anaya","Miriam","Adele","Carmen","Eliza","Fiona",
+"Georgia","Hope","Isla","Jade","Keira","Lara",
+"Mabel","Noelle","Ophelia","Paige","Rhea","Selena",
+"Tessa","Wendy","Yara","Zoe"
+];
+
+const categories = [
+"Friendly","Funny","Creative","Music","Books",
+"Gaming","Motivation","Travel","Technology",
+"Food","Stories","Intellectual"
+];
+
+const descriptions = {
+Friendly:"Enjoys friendly conversations and meeting people.",
+Funny:"Loves jokes, humour and entertaining conversations.",
+Creative:"Interested in art, creativity and design.",
+Music:"Enjoys music and discovering new artists.",
+Books:"Loves reading books and discussing stories.",
+Gaming:"Enjoys video games and gaming discussions.",
+Motivation:"Enjoys positive discussions and personal growth.",
+Travel:"Interested in countries, cultures and travelling.",
+Technology:"Enjoys computers, AI and new technology.",
+Food:"Loves cooking, recipes and food discussions.",
+Stories:"Enjoys storytelling and imagination.",
+Intellectual:"Interested in science, education and knowledge."
+};
+
+const greetings = {
+Friendly:"Hello! I'm happy to meet you. What would you like to talk about?",
+Funny:"Hey! Ready for an interesting conversation? Let's have some fun!",
+Creative:"Hello! I love creativity. What interesting ideas are you working on?",
+Music:"Hi! What kind of music do you enjoy listening to?",
+Books:"Hello! Have you read any interesting books lately?",
+Gaming:"Hey! What games are you interested in?",
+Motivation:"Hello! What new goal are you working towards?",
+Travel:"Hi! Which country would you love to explore?",
+Technology:"Hello! Are you interested in artificial intelligence and technology?",
+Food:"Hi! What is your favourite food?",
+Stories:"Hello! Would you like to share an interesting story?",
+Intellectual:"Hello! What interesting subject shall we explore today?"
+};
+
+const responses = {
+Friendly:[
+"That's interesting! Tell me more.",
+"I enjoy hearing about different experiences.",
+"What has been the best part of your day?",
+"Thanks for sharing that with me!"
+],
+Funny:[
+"That made the conversation interesting!",
+"Let's keep the good humour going!",
+"Do you have another funny story?",
+"I think we need more laughter!"
+],
+Creative:[
+"That's a creative idea!",
+"What inspired you to think about that?",
+"Have you considered another design?",
+"Creativity has so many possibilities!"
+],
+Music:[
+"What music genre do you enjoy most?",
+"Music is such an interesting topic!",
+"Have you discovered any new artists?",
+"What song would you recommend?"
+],
+Books:[
+"That sounds like an interesting story!",
+"What kind of books do you prefer?",
+"Who is your favourite author?",
+"Reading opens up new worlds!"
+],
+Gaming:[
+"That's an interesting gaming topic!",
+"What is your favourite game?",
+"What gaming platform do you use?",
+"Let's discuss another game!"
+],
+Motivation:[
+"Small steps can lead to great progress!",
+"Keep learning and improving!",
+"What is your next goal?",
+"Every new day is an opportunity!"
+],
+Travel:[
+"That sounds like an exciting destination!",
+"What attracts you to that place?",
+"Which country would you visit next?",
+"Travelling helps us discover new cultures!"
+],
+Technology:[
+"That's an interesting technology idea!",
+"AI is changing many industries.",
+"What technology would you like to learn?",
+"Let's explore that idea further!"
+],
+Food:[
+"That sounds delicious!",
+"What ingredients do you enjoy using?",
+"Do you enjoy cooking?",
+"Let's discuss some interesting recipes!"
+],
+Stories:[
+"What happens next in your story?",
+"That's an interesting story idea!",
+"Let's imagine another adventure!",
+"I enjoy exploring creative ideas."
+],
+Intellectual:[
+"That's a fascinating subject!",
+"Let's explore that idea further.",
+"What evidence supports your thinking?",
+"Learning new things is always interesting!"
+],
+Calm:[
+"Let's take our conversation one step at a time.",
+"That sounds interesting. Tell me more.",
+"What's on your mind today?",
+"Thanks for sharing your thoughts."
+],
+Confident:[
+"That's a great topic to explore!",
+"What would you like to accomplish next?",
+"Let's look at the possibilities.",
+"Interesting! What is your next idea?"
+]
+};
+
+let characters = names.map((name,index)=>{
+  const category = categories[index % categories.length];
+  return {
+    id:"preset_"+index,
+    name,
+    category,
+    description:descriptions[category],
+    greeting:greetings[category],
+    replies:responses[category],
+    image:"https://randomuser.me/api/portraits/women/"+index+".jpg",
+    custom:false
+  };
+});
+
+let selectedCategory = "All";
+let activeCharacter = null;
+let selectedAvatar = "😊";
+let uploadedAvatar = "";
+let currentUser = null;
+let authMode = "login";
+let pendingCharacter = null;
+let authBusy = false;
+let chatHistory = [];
+let activeConversationId = null;
+let historyLoading = false;
+
+/* =====================================
+   AUTHENTICATION UI
+===================================== */
+
+function openAuth(){
+  document.getElementById("authModal").classList.add("show");
+  document.getElementById("authMessage").textContent = "";
+}
+
+function closeAuth(){
+  document.getElementById("authModal").classList.remove("show");
+}
+
+function setAuthMode(mode){
+  authMode = mode;
+
+  document.getElementById("authTitle").textContent =
+    mode === "signup" ? "Create your account" : "Welcome back";
+
+  document.getElementById("authDescription").textContent =
+    mode === "signup"
+    ? "Register with your email and password."
+    : "Sign in to start chatting and access your saved characters.";
+
+  document.getElementById("authSubmit").textContent =
+    mode === "signup" ? "Create Account" : "Login";
+
+  document.getElementById("loginTab").classList.toggle("active",mode === "login");
+  document.getElementById("signupTab").classList.toggle("active",mode === "signup");
+
+  document.getElementById("authPassword").autocomplete =
+    mode === "signup" ? "new-password" : "current-password";
+
+  document.getElementById("authMessage").textContent = "";
+}
+
+document.getElementById("authForm").addEventListener("submit",async function(event){
+  event.preventDefault();
+
+  if(authBusy) return;
+  authBusy = true;
+
+  const submit = document.getElementById("authSubmit");
+  const message = document.getElementById("authMessage");
+  const email = document.getElementById("authEmail").value.trim();
+  const password = document.getElementById("authPassword").value;
+
+  submit.disabled = true;
+  submit.textContent = "Please wait...";
+  message.textContent = "";
+
+  try {
+    let result;
+
+    if(authMode === "signup"){
+      result = await supabaseClient.auth.signUp({
+        email,
+        password,
+        options:{
+          emailRedirectTo:window.location.origin
+        }
+      });
+
+      if(result.error) throw result.error;
+
+      if(result.data.session){
+        currentUser = result.data.user;
+        await afterLogin();
+        message.textContent = "Account created successfully!";
+      } else {
+        message.textContent =
+          "Account created. Check your email for the verification link, then return here and log in.";
+      }
+
+    } else {
+      result = await supabaseClient.auth.signInWithPassword({
+        email,
+        password
+      });
+
+      if(result.error) throw result.error;
+
+      currentUser = result.data.user;
+      await afterLogin();
+      message.textContent = "Login successful!";
+    }
+
+  } catch(error) {
+    message.textContent = error.message || "Something went wrong. Please try again.";
+  } finally {
+    authBusy = false;
+    submit.disabled = false;
+    submit.textContent = authMode === "signup" ? "Create Account" : "Login";
+  }
+});
+
+/* =====================================
+   ACCOUNT STATE
+===================================== */
+
+async function afterLogin(){
+  updateAccountButton();
+  closeAuth();
+  await loadCustomCharacters();
+  await loadChatHistory();
+
+  if(pendingCharacter){
+    const character = pendingCharacter;
+    pendingCharacter = null;
+    openChat(character);
+  }
+}
+
+function updateAccountButton(){
+  const button = document.getElementById("accountButton");
+
+  if(currentUser){
+    button.textContent = "Logout";
+    button.onclick = logout;
+  } else {
+    button.textContent = "Login";
+    button.onclick = openAuth;
+  }
+}
+
+async function logout(){
+  if(!confirm("Are you sure you want to log out?")) return;
+
+  const {error} = await supabaseClient.auth.signOut();
+
+  if(error){
+    alert(error.message);
+    return;
+  }
+
+  currentUser = null;
+  pendingCharacter = null;
+  activeCharacter = null;
+
+  characters = characters.filter(c=>!c.custom);
+
+  document.getElementById("chat").style.display = "none";
+
+  updateAccountButton();
+  renderCharacters();
+  renderFilters();
+  document.getElementById("historyList").innerHTML = '<div class="history-empty">Log in to see your saved conversations.</div>';
+
+  alert("You have logged out.");
+}
+
+/* =====================================
+   LOAD USER CHARACTERS FROM CLOUD
+===================================== */
+
+async function loadCustomCharacters(){
+
+  if(!currentUser) return;
+
+  const {data,error} = await supabaseClient
+    .from("custom_characters")
+    .select("*")
+    .order("created_at",{ascending:false});
+
+  if(error){
+    console.error(error);
+    alert("Could not load your saved characters: "+error.message);
+    return;
+  }
+
+  characters = characters.filter(c=>!c.custom);
+
+  const savedCharacters = (data || []).map(row=>({
+    id:row.id,
+    name:row.name,
+    category:row.personality || "Friendly",
+    description:row.interests || "Custom character",
+    greeting:row.intro || "Hello! Nice to meet you.",
+    replies:responses[row.personality] || responses.Friendly,
+    image:row.avatar || "",
+    avatarEmoji:row.avatar && !row.avatar.startsWith("data:") ? row.avatar : "😊",
+    interests:row.interests || "",
+    conversationStyle:row.style || "",
+    custom:true
+  }));
+
+  characters = [...savedCharacters,...characters];
+
+  renderFilters();
+  renderCharacters();
+  updateCharacterCount();
+}
+
+/* =====================================
+   SAVE CHARACTER TO SUPABASE
+===================================== */
+
+async function saveCharacterToCloud(character){
+
+  if(!currentUser){
+    alert("Please log in before creating a character.");
+    openAuth();
+    return false;
+  }
+
+  const {data,error} = await supabaseClient
+    .from("custom_characters")
+    .insert({
+      user_id:currentUser.id,
+      name:character.name,
+      personality:character.category,
+      interests:character.description,
+      style:character.conversationStyle || "",
+      intro:character.greeting,
+      avatar:character.image || character.avatarEmoji || "😊"
+    })
+    .select()
+    .single();
+
+  if(error){
+    alert("Could not save character: "+error.message);
+    return false;
+  }
+
+  character.id = data.id;
+  return true;
+}
+
+/* =====================================
+   CHARACTER CREATOR
+===================================== */
+
+function toggleCreator(){
+  if(!currentUser){
+    alert("Please create an account or log in before creating and saving characters.");
+    openAuth();
+    return;
+  }
+
+  document.getElementById("creatorPanel").classList.toggle("show");
+}
+
+function setupAvatarOptions(){
+  document.querySelectorAll(".avatar-option").forEach(button=>{
+    button.onclick = ()=>{
+      document.querySelectorAll(".avatar-option").forEach(item=>
+        item.classList.remove("selected")
+      );
+
+      button.classList.add("selected");
+      selectedAvatar = button.textContent;
+      uploadedAvatar = "";
+
+      document.getElementById("avatarPreview").style.display = "none";
+      document.getElementById("avatarUpload").value = "";
+    };
+  });
+}
+
+/* COMPRESS UPLOADED IMAGE */
+
+document.getElementById("avatarUpload").addEventListener("change",function(){
+
+  const file = this.files[0];
+  if(!file) return;
+
+  if(!file.type.startsWith("image/")){
+    alert("Please select an image.");
+    this.value = "";
+    return;
+  }
+
+  if(file.size > 2*1024*1024){
+    alert("Please choose an image smaller than 2 MB.");
+    this.value = "";
+    return;
+  }
+
+  const reader = new FileReader();
+
+  reader.onload = function(event){
+    const image = new Image();
+
+    image.onload = function(){
+      const canvas = document.createElement("canvas");
+      const maxSize = 350;
+      const scale = Math.min(1,maxSize/Math.max(image.width,image.height));
+
+      canvas.width = Math.round(image.width*scale);
+      canvas.height = Math.round(image.height*scale);
+
+      canvas.getContext("2d").drawImage(
+        image,0,0,canvas.width,canvas.height
+      );
+
+      uploadedAvatar = canvas.toDataURL("image/jpeg",0.55);
+
+      const preview = document.getElementById("avatarPreview");
+      preview.src = uploadedAvatar;
+      preview.style.display = "block";
+    };
+
+    image.onerror = ()=>alert("Could not read this image.");
+    image.src = event.target.result;
+  };
+
+  reader.readAsDataURL(file);
+});
+
+/* CREATE CHARACTER */
+
+async function createCharacter(){
+
+  if(!currentUser){
+    openAuth();
+    return;
+  }
+
+  const name = document.getElementById("newName").value.trim();
+  const personality = document.getElementById("newPersonality").value;
+  const interests = document.getElementById("newInterests").value.trim();
+  const style = document.getElementById("newStyle").value;
+  const introduction = document.getElementById("newIntroduction").value.trim();
+
+  if(!name){
+    alert("Please enter a character name.");
+    return;
+  }
+
+  const character = {
+    name,
+    category:personality,
+    description:interests || descriptions[personality] || personality+" personality",
+    greeting:introduction || "Hello! I'm "+name+". What would you like to talk about?",
+    replies:responses[personality] || responses.Friendly,
+    image:uploadedAvatar || "",
+    avatarEmoji:uploadedAvatar ? "" : selectedAvatar,
+    interests,
+    conversationStyle:style,
+    custom:true
+  };
+
+  const saveButton = document.querySelector(".save-character");
+  saveButton.disabled = true;
+  saveButton.textContent = "Saving...";
+
+  const avatarValue = character.image || character.avatarEmoji;
+
+  const saved = await saveCharacterToCloud(character);
+
+  saveButton.disabled = false;
+  saveButton.textContent = "Create Character";
+
+  if(!saved) return;
+
+  if(!character.image) character.image = "";
+
+  characters.unshift(character);
+
+  selectedCategory = "All";
+  document.getElementById("search").value = "";
+
+  renderFilters();
+  renderCharacters();
+  updateCharacterCount();
+
+  document.getElementById("newName").value = "";
+  document.getElementById("newInterests").value = "";
+  document.getElementById("newIntroduction").value = "";
+  document.getElementById("avatarUpload").value = "";
+  document.getElementById("avatarPreview").style.display = "none";
+
+  uploadedAvatar = "";
+  selectedAvatar = "😊";
+
+  document.querySelectorAll(".avatar-option").forEach((item,index)=>{
+    item.classList.toggle("selected",index===0);
+  });
+
+  document.getElementById("creatorPanel").classList.remove("show");
+
+  alert(name+" has been saved to your account!");
+
+}
+
+/* =====================================
+   CHARACTER FILTERS AND GALLERY
+===================================== */
+
+function renderFilters(){
+
+  const container = document.getElementById("filters");
+  container.innerHTML = "";
+
+  const allCategories = ["All",...new Set([
+    ...categories,
+    ...characters.map(c=>c.category)
+  ])];
+
+  allCategories.forEach(category=>{
+    const button = document.createElement("button");
+    button.textContent = category;
+    button.className = selectedCategory===category ? "active" : "";
+
+    button.onclick = ()=>{
+      selectedCategory = category;
+      renderFilters();
+      renderCharacters();
+    };
+
+    container.appendChild(button);
+  });
+}
+
+function renderCharacters(){
+
+  const container = document.getElementById("characters");
+  const query = document.getElementById("search").value.trim().toLowerCase();
+
+  container.innerHTML = "";
+
+  const filtered = characters.filter(character=>{
+
+    const categoryMatch =
+      selectedCategory==="All" || character.category===selectedCategory;
+
+    const searchMatch = [
+      character.name,
+      character.category,
+      character.description,
+      character.interests || ""
+    ].join(" ").toLowerCase().includes(query);
+
+    return categoryMatch && searchMatch;
+  });
+
+  document.getElementById("resultCount").textContent =
+    "Showing "+filtered.length+" characters";
+
+  if(filtered.length===0){
+    container.innerHTML='<div class="empty">No characters found. Try another search.</div>';
+    return;
+  }
+
+  filtered.forEach(character=>{
+
+    const card = document.createElement("div");
+    card.className = "character";
+
+    let avatar;
+
+    if(character.custom && !character.image){
+      avatar = document.createElement("div");
+      avatar.className = "avatar";
+      avatar.style.display = "flex";
+      avatar.style.alignItems = "center";
+      avatar.style.justifyContent = "center";
+      avatar.style.fontSize = "60px";
+      avatar.textContent = character.avatarEmoji || "😊";
+    } else {
+      avatar = document.createElement("img");
+      avatar.className = "avatar";
+      avatar.src = character.image;
+      avatar.alt = character.name+" portrait";
+      avatar.loading = "lazy";
+
+      avatar.onerror = ()=>{
+        avatar.onerror = null;
+        avatar.src = "https://placehold.co/300x300/302044/ffffff?text=AI";
+      };
+    }
+
+    const name = document.createElement("h3");
+    name.textContent = character.name;
+
+    const tag = document.createElement("span");
+    tag.className = "tag";
+    tag.textContent = character.category;
+
+    const description = document.createElement("p");
+    description.textContent = character.description;
+
+    const button = document.createElement("button");
+    button.textContent = "Start Chat";
+    button.onclick = ()=>requestChat(character);
+
+    card.append(avatar,name,tag,description,button);
+    container.appendChild(card);
+  });
+}
+
+function updateCharacterCount(){
+  document.getElementById("headerCount").textContent =
+    characters.length+" Characters";
+}
+
+/* =====================================
+   LOGIN REQUIRED BEFORE CHAT
+===================================== */
+
+function requestChat(character){
+
+  if(!currentUser){
+    pendingCharacter = character;
+    setAuthMode("login");
+    document.getElementById("authMessage").textContent =
+      "Please log in or register before starting a chat.";
+    openAuth();
+    return;
+  }
+
+  openChat(character);
+}
+
+/* =====================================
+   SAVED CHAT HISTORY
+===================================== */
+
+async function loadChatHistory(){
+  const list = document.getElementById("historyList");
+  if(!currentUser || !list) return;
+  if(historyLoading) return;
+
+  historyLoading = true;
+  list.innerHTML = '<div class="history-empty">Loading your conversations...</div>';
+
+  try {
+    const { data, error } = await supabaseClient
+      .from("chat_conversations")
+      .select("id, character_name, updated_at, created_at")
+      .order("updated_at", { ascending: false })
+      .limit(30);
+
+    if(error) throw error;
+
+    list.innerHTML = "";
+
+    if(!data || data.length === 0){
+      list.innerHTML = '<div class="history-empty">You have no saved conversations yet. Start chatting with a character to create one.</div>';
+      return;
+    }
+
+    data.forEach(conversation => {
+      const item = document.createElement("div");
+      item.className = "history-item";
+
+      const info = document.createElement("div");
+      const name = document.createElement("strong");
+      name.textContent = conversation.character_name || "AI Companion";
+
+      const date = document.createElement("small");
+      const stamp = conversation.updated_at || conversation.created_at;
+      date.textContent = stamp ? new Date(stamp).toLocaleString() : "Saved conversation";
+
+      info.append(name, date);
+
+      const openButton = document.createElement("button");
+      openButton.type = "button";
+      openButton.textContent = "Open";
+      openButton.onclick = () => openSavedConversation(conversation.id);
+
+      item.append(info, openButton);
+      list.appendChild(item);
+    });
+  } catch(error) {
+    console.error("Chat history error:", error);
+    list.innerHTML = '<div class="history-empty">Could not load chat history: ' +
+      String(error.message || "Please try again.") + '</div>';
+  } finally {
+    historyLoading = false;
+  }
+}
+
+async function openSavedConversation(conversationId){
+  if(!currentUser) {
+    openAuth();
+    return;
+  }
+
+  try {
+    const { data: conversation, error: conversationError } = await supabaseClient
+      .from("chat_conversations")
+      .select("*")
+      .eq("id", conversationId)
+      .single();
+
+    if(conversationError) throw conversationError;
+
+    const { data: savedMessages, error: messagesError } = await supabaseClient
+      .from("chat_messages")
+      .select("role, content, created_at")
+      .eq("conversation_id", conversationId)
+      .order("created_at", { ascending: true });
+
+    if(messagesError) throw messagesError;
+
+    const character = characters.find(c =>
+      c.name === conversation.character_name
+    ) || {
+      id: conversation.character_id || "saved_character",
+      name: conversation.character_name || "AI Companion",
+      category: "Friendly",
+      description: "Friendly AI companion",
+      greeting: "",
+      image: "",
+      custom: false
+    };
+
+    activeCharacter = character;
+    activeConversationId = conversationId;
+    chatHistory = [];
+
+    const avatar = document.getElementById("chatAvatar");
+    if(character.custom && !character.image) {
+      avatar.style.display = "none";
+      document.getElementById("chatName").textContent =
+        (character.avatarEmoji || "😊") + " " + character.name;
+    } else {
+      avatar.style.display = character.image ? "block" : "none";
+      if(character.image) avatar.src = character.image;
+      document.getElementById("chatName").textContent = character.name;
+    }
+
+    const messages = document.getElementById("messages");
+    messages.innerHTML = "";
+
+    (savedMessages || []).forEach(item => {
+      addMessage(item.content, item.role === "user" ? "user" : "ai");
+      chatHistory.push({ role: item.role, text: item.content });
+    });
+
+    document.getElementById("chat").style.display = "flex";
+    document.getElementById("userInput").focus();
+  } catch(error) {
+    console.error("Open saved conversation error:", error);
+    alert("Could not open this conversation: " + (error.message || "Please try again."));
+  }
+}
+
+async function createCloudConversation(character){
+  const { data, error } = await supabaseClient
+    .from("chat_conversations")
+    .insert({
+      user_id: currentUser.id,
+      character_id: String(character.id || ""),
+      character_name: character.name
+    })
+    .select("id")
+    .single();
+
+  if(error) throw error;
+  return data.id;
+}
+
+async function saveCloudMessage(conversationId, role, content){
+  const { error } = await supabaseClient
+    .from("chat_messages")
+    .insert({
+      conversation_id: conversationId,
+      user_id: currentUser.id,
+      role,
+      content
+    });
+
+  if(error) throw error;
+
+  await supabaseClient
+    .from("chat_conversations")
+    .update({ updated_at: new Date().toISOString() })
+    .eq("id", conversationId);
+}
+
+/* =====================================
+   CHAT
+===================================== */
+
+function openChat(character){
+
+  if(!currentUser){
+    requestChat(character);
+    return;
+  }
+
+  activeCharacter = character;
+
+  const avatar = document.getElementById("chatAvatar");
+
+  if(character.custom && !character.image){
+    avatar.style.display = "none";
+    document.getElementById("chatName").textContent =
+      (character.avatarEmoji || "😊")+" "+character.name;
+  } else {
+    avatar.style.display = "block";
+    avatar.src = character.image;
+    document.getElementById("chatName").textContent = character.name;
+  }
+
+  document.getElementById("messages").innerHTML = "";
+  document.getElementById("chat").style.display = "flex";
+
+  chatHistory = [];
+  activeConversationId = null;
+  addMessage(character.greeting,"ai");
+  chatHistory.push({ role: "model", text: character.greeting });
+}
+
+function closeChat(){
+  document.getElementById("chat").style.display = "none";
+  activeCharacter = null;
+}
+
+function addMessage(text,type){
+
+  const messages = document.getElementById("messages");
+  const message = document.createElement("div");
+
+  message.className =
+    "message "+(type==="user" ? "user-message" : "ai-message");
+
+  message.textContent = text;
+  messages.appendChild(message);
+  messages.scrollTop = messages.scrollHeight;
+}
+
+/* GEMINI AI CHAT WITH CLOUD HISTORY */
+
+async function sendMessage(){
+
+  const input = document.getElementById("userInput");
+  const text = input.value.trim();
+
+  if(!text || !activeCharacter) return;
+
+  if(!currentUser){
+    closeChat();
+    openAuth();
+    return;
+  }
+
+  const characterAtSend = activeCharacter;
+  const sendButton = document.querySelector(".chat-input button");
+  const messages = document.getElementById("messages");
+
+  addMessage(text,"user");
+  input.value = "";
+  input.disabled = true;
+  sendButton.disabled = true;
+  sendButton.textContent = "...";
+
+  const typing = document.createElement("div");
+  typing.className = "typing";
+  typing.textContent = characterAtSend.name+" is thinking...";
+  messages.appendChild(typing);
+  messages.scrollTop = messages.scrollHeight;
+
+  const previousHistory = chatHistory.slice(-12);
+  chatHistory.push({ role: "user", text: text });
+
+  try {
+    const { data: sessionData, error: sessionError } =
+      await supabaseClient.auth.getSession();
+
+    if(sessionError) throw sessionError;
+    if(!sessionData.session) {
+      throw new Error("Your login session has expired. Please log in again.");
+    }
+
+    if(!activeConversationId) {
+      activeConversationId = await createCloudConversation(characterAtSend);
+    }
+
+    await saveCloudMessage(activeConversationId, "user", text);
+
+    const { data, error } = await supabaseClient.functions.invoke(
+      "companion-chat",
+      {
+        body: {
+          message: text,
+          character: {
+            name: characterAtSend.name,
+            personality: characterAtSend.category || "Friendly",
+            interests: characterAtSend.interests || characterAtSend.description || "",
+            style: characterAtSend.conversationStyle || "Friendly and simple",
+            intro: characterAtSend.greeting || ""
+          },
+          history: previousHistory
+        }
+      }
+    );
+
+    if(error) {
+      let detail = error.message || "Could not contact the AI function.";
+      if(error.context && typeof error.context.json === "function") {
+        try {
+          const serverError = await error.context.json();
+          if(serverError.error) detail = serverError.error;
+        } catch (_) {}
+      }
+      throw new Error(detail);
+    }
+
+    if(!data || typeof data.reply !== "string" || !data.reply.trim()) {
+      throw new Error("The AI returned an empty response. Please try again.");
+    }
+
+    chatHistory.push({ role: "model", text: data.reply });
+    await saveCloudMessage(activeConversationId, "model", data.reply);
+
+    if(activeCharacter === characterAtSend) {
+      addMessage(data.reply,"ai");
+    }
+
+    loadChatHistory();
+
+  } catch(error) {
+    console.error("AI chat error:", error);
+    if(activeCharacter === characterAtSend) {
+      addMessage(
+        "I couldn't complete that message. Please try again. (" +
+        (error.message || "Connection error") + ")",
+        "ai"
+      );
+    }
+  } finally {
+    typing.remove();
+    input.disabled = false;
+    sendButton.disabled = false;
+    sendButton.textContent = "Send";
+    if(activeCharacter === characterAtSend) input.focus();
+  }
+}
+
+/* =====================================
+   STARTUP AND SESSION RESTORATION
+===================================== */
+
+document.getElementById("search").addEventListener("input",renderCharacters);
+
+async function initializeApp(){
+
+  if(!window.supabase){
+    alert("Supabase library did not load. Check your internet connection and refresh.");
+    return;
+  }
+
+  updateAccountButton();
+  setupAvatarOptions();
+  renderFilters();
+  renderCharacters();
+  updateCharacterCount();
+
+  const {data,error} = await supabaseClient.auth.getSession();
+
+  if(error){
+    console.error(error);
+    return;
+  }
+
+  currentUser = data.session ? data.session.user : null;
+
+  updateAccountButton();
+
+  if(currentUser){
+    await loadCustomCharacters();
+    await loadChatHistory();
+  }
+
+  supabaseClient.auth.onAuthStateChange((event,session)=>{
+    const previousUser = currentUser ? currentUser.id : null;
+    const nextUser = session ? session.user : null;
+    const nextUserId = nextUser ? nextUser.id : null;
+
+    currentUser = nextUser;
+
+    updateAccountButton();
+
+    if(previousUser !== nextUserId){
+      if(!currentUser){
+        characters = characters.filter(c=>!c.custom);
+        document.getElementById("chat").style.display = "none";
+        activeCharacter = null;
+        renderFilters();
+        renderCharacters();
+        updateCharacterCount();
+      } else {
+        setTimeout(()=>loadCustomCharacters(),0);
+      }
+    }
+  });
+}
+
+initializeApp();
+
+</script>
+</body>
+</html>
